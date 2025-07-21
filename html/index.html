@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aswin Rajaram - Interactive Resume</title>
+    <!-- Google Fonts: Playfair Display for headings, Inter for body -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Heroicons CDN -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%);
+            color: #2d3748;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+        .glass {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 24px 0 rgba(30, 41, 59, 0.08);
+        }
+        .timeline-item-content {
+            transition: max-height 0.5s, opacity 0.5s;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .timeline-item.active .timeline-item-content {
+            max-height: 1000px;
+            opacity: 1;
+            padding-top: 1rem;
+        }
+        .timeline-accent {
+            background: linear-gradient(180deg, #2563eb 0%, #38bdf8 100%);
+        }
+        .impact-card {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ef 100%);
+            box-shadow: 0 4px 24px 0 rgba(30, 41, 59, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .impact-card:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 8px 32px 0 rgba(30, 41, 59, 0.12);
+        }
+        .skill-category-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: linear-gradient(90deg, #e0e7ff 0%, #f0f4ff 100%);
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            transition: background 0.3s;
+        }
+        .skill-category-header:hover {
+            background: linear-gradient(90deg, #c7d2fe 0%, #e0e7ff 100%);
+        }
+        .skill-list-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s, opacity 0.5s;
+            opacity: 0;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        .skill-category.active .skill-list-content {
+            max-height: 500px;
+            opacity: 1;
+        }
+        .skill-category-header .arrow-icon {
+            transition: transform 0.3s;
+        }
+        .skill-category.active .skill-category-header .arrow-icon {
+            transform: rotate(90deg);
+        }
+        .company-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            object-fit: contain;
+            margin-right: 14px;
+            box-shadow: 0 2px 8px 0 rgba(30, 41, 59, 0.08);
+        }
+        .project-card {
+            background: linear-gradient(135deg, #fff 0%, #f0f4ff 100%);
+            box-shadow: 0 4px 24px 0 rgba(30, 41, 59, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .project-card:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 8px 32px 0 rgba(30, 41, 59, 0.12);
+        }
+        .avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 24px 0 rgba(30, 41, 59, 0.10);
+            margin: 0 auto 1rem auto;
+            display: block;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s forwards;
+        }
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 2rem 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(30, 41, 59, 0.15);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            outline: none;
+            transition: color 0.2s;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #2563eb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Navigation -->
+    <header id="header" class="glass sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-2xl font-bold text-gray-800 tracking-tight">Aswin Rajaram</h1>
+                </div>
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="#timeline" class="nav-link text-gray-600 font-medium border-b-2 border-transparent pb-1">Career Timeline</a>
+                    <a href="#skillsets" class="nav-link text-gray-600 font-medium border-b-2 border-transparent pb-1">Skill Sets</a>
+                    <a href="#impact" class="nav-link text-gray-600 font-medium border-b-2 border-transparent pb-1">Impact Highlights</a>
+                    <a href="#projects" class="nav-link text-gray-600 font-medium border-b-2 border-transparent pb-1">Projects</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Hero Section -->
+        <section class="text-center py-20 bg-gradient-to-br from-blue-50 via-white to-blue-100 rounded-3xl shadow-xl mb-16 fade-in" style="animation-delay:0.1s;">
+            <img src="https://ui-avatars.com/api/?name=Aswin+Rajaram&background=2563eb&color=fff&size=220" alt="Aswin Rajaram Avatar" class="avatar">
+            <h2 class="text-5xl md:text-6xl font-bold text-gray-900 mb-2" style="font-family: 'Playfair Display', serif;">Data and Analytics Engineer</h2>
+            <p class="mt-4 max-w-3xl mx-auto text-lg text-gray-600">
+                Highly accomplished Data Engineer with 8+ years of experience across Finance, Automotive, Marketplace, and Advertising domains. Passionate about transforming complex data into actionable insights and driving business value through well-architected data products.
+            </p>
+            <div class="mt-8 flex justify-center space-x-4">
+                <button id="contactMeBtn" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-blue-700 transition duration-300 shadow-lg flex items-center gap-2"><i data-feather="mail"></i>Contact Me</button>
+                <a href="https://www.linkedin.com/in/aswin-rajaram" target="_blank" class="bg-white border border-blue-600 text-blue-700 font-bold py-2 px-6 rounded-full hover:bg-blue-50 transition duration-300 shadow flex items-center gap-2"><i data-feather="linkedin"></i>LinkedIn</a>
+            </div>
+        </section>
+
+        <!-- Career Timeline Section -->
+        <section id="timeline" class="py-16 fade-in" style="animation-delay:0.2s;">
+            <div class="text-center mb-12">
+                <h3 class="text-4xl font-bold text-gray-900 mb-2">Career Timeline</h3>
+                <p class="mt-2 text-md text-gray-600">An interactive journey through my professional experience. Click on any role to see the details.</p>
+            </div>
+            <div id="timeline-container" class="relative">
+                <!-- Timeline Connector -->
+                <div class="absolute left-1/2 h-full w-1 timeline-accent rounded-full transform -translate-x-1/2"></div>
+                <!-- Timeline items will be injected here by JS -->
+            </div>
+        </section>
+
+        <!-- Skill Sets Section -->
+        <section id="skillsets" class="py-16 bg-white rounded-3xl shadow-xl fade-in" style="animation-delay:0.3s;">
+            <div class="text-center mb-12">
+                <h3 class="text-4xl font-bold text-gray-900 mb-2">Skill Sets</h3>
+                <p class="mt-2 text-md text-gray-600">Explore my technical proficiencies organized by category. Click on a category to expand or collapse the list.</p>
+            </div>
+            <div id="skill-list-container" class="max-w-3xl mx-auto">
+                <!-- Skill categories and lists will be injected here by JS -->
+            </div>
+        </section>
+        
+        <!-- Impact Highlights Section -->
+        <section id="impact" class="py-16 fade-in" style="animation-delay:0.4s;">
+             <div class="text-center mb-12">
+                <h3 class="text-4xl font-bold text-gray-900 mb-2">Impact Highlights</h3>
+                <p class="mt-2 text-md text-gray-600">Key quantified achievements demonstrating tangible business value and performance improvements.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Impact cards will be injected by JS -->
+            </div>
+        </section>
+
+        <!-- Personal Projects Section -->
+        <section id="projects" class="py-16 fade-in" style="animation-delay:0.5s;">
+            <div class="text-center mb-12">
+                <h3 class="text-4xl font-bold text-gray-900 mb-2">Personal Projects</h3>
+                <p class="mt-2 text-md text-gray-600">Initiatives undertaken to explore new technologies and solve interesting problems.</p>
+            </div>
+            <div id="projects-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <!-- Project cards will be injected by JS -->
+            </div>
+        </section>
+        
+    </main>
+    
+    <footer class="bg-white mt-16 border-t">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-600">
+             <p>&copy; 2025 Aswin Rajaram. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Email Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h4 class="text-2xl font-bold text-gray-800 mb-4">Contact Aswin</h4>
+            <p class="text-lg text-gray-700 mb-6" id="emailToCopy">aswin95@gmail.com</p>
+            <button id="copyEmailBtn" class="bg-blue-500 text-white font-bold py-2 px-4 rounded-full hover:bg-blue-600 transition duration-300">Copy Email</button>
+            <p id="copyMessage" class="mt-3 text-sm text-green-600 hidden">Email copied to clipboard!</p>
+        </div>
+    </div>
+
+    <script>
+const experienceData = [
+    {
+        role: 'Analytics Engineer II',
+        company: 'Deliveroo',
+        period: 'May 2023 – Present',
+        location: 'Remote',
+        logo: 'logos/deliveroo.png',
+        details: [
+            'Engineered and deployed scalable data pipelines in Snowflake, enabling self-serve analytics for over 100 stakeholders and improving data accessibility by 25%.',
+            'Collaborated cross-functionally with Data Scientists, ML Engineers, and Product teams to deliver 15+ robust analytics solutions, directly impacting product features and operational efficiency.',
+            'Refactored and optimized critical legacy SQL and Python code, resulting in a 30% reduction in run-time performance and enhanced system stability.',
+            'Influenced data roadmap and product decisions, leading to a 15% improvement in data tracking quality and enabling better-informed strategic decision-making.',
+            'Conducted coding interviews for Analytics Engineering applicants, contributing to the recruitment and growth of the team.'
+        ]
+    },
+    {
+        role: 'Data Engineer',
+        company: 'PadSquad',
+        period: 'Jan 2021 – Apr 2023',
+        location: 'Remote',
+        logo: 'logos/padsquad.jpg',
+        details: [
+            'Developed and maintained end-to-end data pipelines on AWS (Data Wrangler, S3, Athena, Glue, SNS, Lambda) that processed over 5 TB of mobile ad interaction data daily, ensuring high availability and data integrity.',
+            'Performed historical data processing using PySpark on AWS Glue and Amazon EMR, optimizing large-scale data transformations for reporting and analysis.',
+            'Designed and built 10+ interactive dashboards using Amazon QuickSight and Tableau, providing critical business insights to C-suite executives and business users.'
+        ]
+    },
+    {
+        role: 'Data Engineer',
+        company: 'Nissan Digital',
+        period: 'Nov 2018 – Jan 2021',
+        location: 'Trivandrum, Kerala',
+        logo: 'logos/nissan.jpg',
+        details: [
+            'Led data wrangling and ingestion efforts into Hive and SAP HANA tables, automating complex workflows using Oozie, which reduced manual effort by 40%.',
+            'Scheduled, executed, and monitored Windows Batch jobs in IBM TWS, ensuring timely data delivery for critical business operations.',
+            'Significantly improved performance and restructured SAP HANA SQL Procedures, reducing data load time from 1 hour to less than 5 minutes for key financial reports.'
+        ]
+    },
+    {
+        role: 'Product Development Engineer',
+        company: 'Envestnet Inc.',
+        period: 'Jun 2017 – Nov 2018',
+        location: 'Trivandrum, Kerala',
+        logo: 'logos/envestnet.png',
+        details: [
+            'Developed and maintained a Data Warehouse for a financial platform, ensuring data accuracy and reconciling errors after monthly refreshes for 50+ critical data points.',
+            'Scheduled and executed ETL jobs that generated compliance reports for the Securities and Exchanges Commission (SEC), USA, ensuring adherence to regulatory requirements.',
+            'Authored stored procedures and designed SSIS packages to efficiently transfer over 1TB of data monthly from the platform to staging and database layers.'
+        ]
+    }
+];
+
+const skillsData = {
+    'All': ['Python', 'SQL', 'PySpark', 'AWS S3', 'AWS Athena', 'AWS Glue', 'AWS EMR', 'AWS Lambda', 'Snowflake', 'dbt', 'Tableau', 'Looker', 'Git', 'SSIS', 'Oozie'],
+    'Languages': ['Python', 'SQL', 'PySpark'],
+    'Cloud (AWS)': ['AWS S3', 'AWS Athena', 'AWS Glue', 'AWS EMR', 'AWS Lambda', 'SNS', 'Kinesis'],
+    'Data Warehousing': ['Snowflake', 'Hive', 'SAP HANA'],
+    'ETL & Orchestration': ['dbt', 'Data Wrangler', 'Oozie', 'SSIS'],
+    'BI & Visualization': ['Tableau', 'Amazon QuickSight', 'Looker']
+};
+
+const impactData = [
+    { value: '>90%', text: 'Reduction in data load time for key reports (from 1hr to <5m).' },
+    { value: '5 TB', text: 'Of mobile ad interaction data processed daily.' },
+    { value: '30%', text: 'Reduction in run-time performance of legacy code after optimization.' },
+    { value: '100+', text: 'Stakeholders enabled with self-serve analytics via new pipelines.' },
+    { value: '15+', text: 'Robust analytics solutions delivered impacting product & operations.' },
+    { value: '40%', text: 'Reduction in manual effort through workflow automation.' }
+];
+
+const projectsData = [
+    {
+        title: 'PDF to Speech Converter',
+        description: 'Developed a Python application using PyPDF2 and pyttsx3 libraries to convert PDF documents into audible speech, enhancing accessibility.',
+        tech: ['Python', 'PyPDF2', 'pyttsx3']
+    },
+    {
+        title: 'Data Pipeline using Modern Data Stack (PoC)',
+        description: 'Designed and implemented an end-to-end data pipeline Proof of Concept utilizing Google Sheets, Fivetran, Snowflake, dbt, and Google Studio, demonstrating proficiency in modern data architecture.',
+        tech: ['Fivetran', 'Snowflake', 'dbt', 'Google Studio']
+    }
+];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            feather.replace();
+            // Navigation
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                        });
+                    }
+                });
+            }, { rootMargin: "-50% 0px -50% 0px" });
+            sections.forEach(section => observer.observe(section));
+            navLinks.forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            // Timeline
+            const timelineContainer = document.getElementById('timeline-container');
+            experienceData.forEach((item, index) => {
+                const isLeft = index % 2 === 0;
+                const timelineItem = document.createElement('div');
+                timelineItem.className = `timeline-item mb-12 flex justify-between items-center w-full ${isLeft ? 'flex-row-reverse' : ''} fade-in`;
+                timelineItem.style.animationDelay = `${0.2 + index * 0.1}s`;
+                timelineItem.innerHTML = `
+                    <div class="order-1 w-5/12"></div>
+                    <div class="z-20 flex items-center order-1 bg-gradient-to-br from-blue-600 to-sky-400 shadow-xl w-10 h-10 rounded-full border-4 border-white">
+                        <h1 class="mx-auto font-semibold text-lg text-white">${experienceData.length - index}</h1>
+                    </div>
+                    <div class="order-1 bg-white rounded-2xl shadow-xl w-5/12 px-8 py-6 cursor-pointer transition-transform duration-300 hover:scale-105">
+                        <div class="flex items-center mb-4">
+                            <img src="${item.logo}" alt="${item.company} Logo" class="company-logo">
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-xl" style="font-family: 'Playfair Display', serif;">${item.company}</h3>
+                                <p class="text-sm font-medium text-blue-600">${item.role}</p>
+                                <p class="text-sm text-gray-500">${item.period}</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item-content">
+                            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                                ${item.details.map(d => `<li>${d}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                timelineContainer.appendChild(timelineItem);
+            });
+            document.querySelectorAll('.timeline-item .cursor-pointer').forEach(item => {
+                item.addEventListener('click', () => {
+                    const parent = item.closest('.timeline-item');
+                    parent.classList.toggle('active');
+                });
+            });
+            // Skill Sets List
+            const skillIcons = {
+                'All': 'star',
+                'Languages': 'code',
+                'Cloud (AWS)': 'cloud',
+                'Data Warehousing': 'database',
+                'ETL & Orchestration': 'repeat',
+                'BI & Visualization': 'bar-chart-2'
+            };
+            const skillListContainer = document.getElementById('skill-list-container');
+            Object.keys(skillsData).forEach(category => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'skill-category mb-4 bg-white rounded-xl shadow-md fade-in';
+                categoryDiv.style.animationDelay = '0.3s';
+                categoryDiv.innerHTML = `
+                    <div class="skill-category-header">
+                        <span class="flex items-center gap-2"><i data-feather="${skillIcons[category] || 'star'}"></i><h4 class="font-bold text-lg text-gray-800">${category}</h4></span>
+                        <span class="arrow-icon text-gray-600 text-xl">&#9658;</span>
+                    </div>
+                    <div class="skill-list-content">
+                        <div class="p-4 pt-0 flex flex-wrap gap-2">
+                            ${skillsData[category].map(skill => `<span class="bg-gradient-to-r from-blue-100 to-sky-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full shadow">${skill}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+                skillListContainer.appendChild(categoryDiv);
+                categoryDiv.querySelector('.skill-category-header').addEventListener('click', () => {
+                    categoryDiv.classList.toggle('active');
+                });
+            });
+            feather.replace();
+            // Impact Cards
+            const impactIcons = [
+                'zap', 'database', 'activity', 'users', 'check-circle', 'trending-up'
+            ];
+            const impactContainer = document.querySelector('#impact .grid');
+            impactData.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = 'impact-card p-8 rounded-2xl text-center flex flex-col items-center gap-2 fade-in';
+                card.style.animationDelay = `${0.4 + idx * 0.1}s`;
+                card.innerHTML = `
+                    <div class="mb-2"><i data-feather="${impactIcons[idx % impactIcons.length]}"></i></div>
+                    <p class="text-5xl font-bold text-blue-600">${item.value}</p>
+                    <p class="mt-2 text-md text-gray-700">${item.text}</p>
+                `;
+                impactContainer.appendChild(card);
+            });
+            feather.replace();
+            // Projects Cards
+            const projectIcons = ['file-text', 'layers'];
+            const projectsContainer = document.getElementById('projects-container');
+            projectsData.forEach((project, idx) => {
+                const card = document.createElement('div');
+                card.className = 'project-card p-8 rounded-2xl shadow-md flex flex-col gap-2 fade-in';
+                card.style.animationDelay = `${0.5 + idx * 0.1}s`;
+                card.innerHTML = `
+                    <div class="mb-2"><i data-feather="${projectIcons[idx % projectIcons.length]}"></i></div>
+                    <h4 class="font-bold text-xl text-gray-800" style="font-family: 'Playfair Display', serif;">${project.title}</h4>
+                    <p class="mt-2 text-gray-600">${project.description}</p>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        ${project.tech.map(t => `<span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full shadow">${t}</span>`).join('')}
+                    </div>
+                `;
+                projectsContainer.appendChild(card);
+            });
+            feather.replace();
+            // Contact Modal Logic
+            const contactModal = document.getElementById('contactModal');
+            const contactMeBtn = document.getElementById('contactMeBtn');
+            const closeButton = document.querySelector('.close-button');
+            const copyEmailBtn = document.getElementById('copyEmailBtn');
+            const emailToCopy = document.getElementById('emailToCopy').textContent;
+            const copyMessage = document.getElementById('copyMessage');
+            contactMeBtn.addEventListener('click', () => {
+                contactModal.style.display = 'flex';
+                copyMessage.classList.add('hidden');
+            });
+            closeButton.addEventListener('click', () => {
+                contactModal.style.display = 'none';
+            });
+            window.addEventListener('click', (event) => {
+                if (event.target === contactModal) {
+                    contactModal.style.display = 'none';
+                }
+            });
+            copyEmailBtn.addEventListener('click', () => {
+                const textArea = document.createElement('textarea');
+                textArea.value = emailToCopy;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    copyMessage.classList.remove('hidden');
+                } catch (err) {
+                    copyMessage.textContent = 'Failed to copy. Please copy manually.';
+                    copyMessage.classList.remove('hidden');
+                    copyMessage.classList.add('text-red-600');
+                }
+                document.body.removeChild(textArea);
+            });
+        });
+    </script>
+</body>
+</html>
