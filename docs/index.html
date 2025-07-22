@@ -10,6 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Heroicons CDN -->
     <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="icon" type="image/png" href="logos/ar.png">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -168,6 +169,44 @@
             text-decoration: none;
             cursor: pointer;
         }
+        @media (max-width: 640px) {
+  #timeline-container .timeline-item {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  #timeline-container .order-1.w-5\/12 {
+    display: none !important;
+  }
+  #timeline-container .order-1.bg-white {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  #timeline-container .z-20 {
+    margin: 0 auto 1rem auto !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+  #timeline-container .timeline-item-content {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  #timeline-container .timeline-accent {
+    left: 20px !important;
+    right: auto !important;
+    width: 2px !important;
+    min-width: 2px !important;
+    max-width: 2px !important;
+    transform: none !important;
+  }
+}
+        .timeline-item-content ul {
+            text-align: justify;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -278,7 +317,7 @@ const experienceData = [
         logo: 'logos/deliveroo.png',
         details: [
             'Engineered and deployed scalable data pipelines in Snowflake, enabling self-serve analytics for over 100 stakeholders and improving data accessibility by 25%.',
-            'Collaborated cross-functionally with Data Scientists, ML Engineers, and Product teams to deliver 15+ robust analytics solutions, directly impacting product features and operational efficiency.',
+            'Collaborated cross-functionally with Data Scientists, ML Engineers, and Product teams to deliver 10+ robust analytics solutions, directly impacting product features and operational efficiency.',
             'Refactored and optimized critical legacy SQL and Python code, resulting in a 30% reduction in run-time performance and enhanced system stability.',
             'Influenced data roadmap and product decisions, leading to a 15% improvement in data tracking quality and enabling better-informed strategic decision-making.',
             'Conducted coding interviews for Analytics Engineering applicants, contributing to the recruitment and growth of the team.'
@@ -291,9 +330,10 @@ const experienceData = [
         location: 'Remote',
         logo: 'logos/padsquad.jpg',
         details: [
-            'Developed and maintained end-to-end data pipelines on AWS (Data Wrangler, S3, Athena, Glue, SNS, Lambda) that processed over 5 TB of mobile ad interaction data daily, ensuring high availability and data integrity.',
+            'Developed and maintained end-to-end data pipelines on AWS (Data Wrangler, S3, Athena, Glue, SNS, Lambda) that processed over 5 GB of mobile ad interaction data daily, ensuring high availability and data integrity.',
             'Performed historical data processing using PySpark on AWS Glue and Amazon EMR, optimizing large-scale data transformations for reporting and analysis.',
-            'Designed and built 10+ interactive dashboards using Amazon QuickSight and Tableau, providing critical business insights to C-suite executives and business users.'
+            'Designed and built 10+ interactive dashboards using Amazon QuickSight and Tableau, providing critical business insights to C-suite executives and business users.',
+            'Evaluated and engaged with leading data platform vendors (Snowflake, Firebolt, Domo, Tableau), conducting in-depth PoCs and assessments to recommend the optimal solution for the company’s evolving data ecosystem.'
         ]
     },
     {
@@ -333,10 +373,10 @@ const skillsData = {
 
 const impactData = [
     { value: '>90%', text: 'Reduction in data load time for key reports (from 1hr to <5m).' },
-    { value: '5 TB', text: 'Of mobile ad interaction data processed daily.' },
+    { value: '5 GB', text: 'Of mobile ad interaction data processed daily.' },
     { value: '30%', text: 'Reduction in run-time performance of legacy code after optimization.' },
     { value: '100+', text: 'Stakeholders enabled with self-serve analytics via new pipelines.' },
-    { value: '15+', text: 'Robust analytics solutions delivered impacting product & operations.' },
+    { value: '10+', text: 'Robust analytics solutions delivered impacting product & operations.' },
     { value: '40%', text: 'Reduction in manual effort through workflow automation.' }
 ];
 
@@ -398,8 +438,8 @@ const projectsData = [
                             </div>
                         </div>
                         <div class="timeline-item-content">
-                            <ul class="list-disc list-inside space-y-2 text-gray-700">
-                                ${item.details.map(d => `<li>${d}</li>`).join('')}
+                            <ul class="space-y-2 text-gray-700 text-justify">
+                                ${item.details.map(d => `<li class="flex items-start gap-2"><span class="text-xl font-bold select-none">–</span><span class="block flex-1">${d}</span></li>`).join('')}
                             </ul>
                         </div>
                     </div>
