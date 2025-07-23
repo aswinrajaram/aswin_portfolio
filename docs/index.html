@@ -313,7 +313,7 @@ const experienceData = [
         role: 'Analytics Engineer II',
         company: 'Deliveroo',
         period: 'May 2023 – Present',
-        location: 'Remote',
+        location: 'Hyderabad, Telangana',
         logo: 'logos/deliveroo.png',
         details: [
             'Engineered and deployed scalable data pipelines in Snowflake, enabling self-serve analytics for over 100 stakeholders and improving data accessibility by 25%.',
@@ -330,7 +330,7 @@ const experienceData = [
         location: 'Remote',
         logo: 'logos/padsquad.jpg',
         details: [
-            'Developed and maintained end-to-end data pipelines on AWS (Data Wrangler, S3, Athena, Glue, SNS, Lambda) that processed over 5 GB of mobile ad interaction data daily, ensuring high availability and data integrity.',
+            'Developed and maintained end-to-end data pipelines on AWS (Data Wrangler, S3, Athena, Glue, SNS, Lambda) that processed over 20 GB of mobile ad interaction data daily, ensuring high availability and data integrity.',
             'Performed historical data processing using PySpark on AWS Glue and Amazon EMR, optimizing large-scale data transformations for reporting and analysis.',
             'Designed and built 10+ interactive dashboards using Amazon QuickSight and Tableau, providing critical business insights to C-suite executives and business users.',
             'Evaluated and engaged with leading data platform vendors (Snowflake, Firebolt, Domo, Tableau), conducting in-depth PoCs and assessments to recommend the optimal solution for the company’s evolving data ecosystem.'
@@ -373,7 +373,7 @@ const skillsData = {
 
 const impactData = [
     { value: '>90%', text: 'Reduction in data load time for key reports (from 1hr to <5m).' },
-    { value: '5 GB', text: 'Of mobile ad interaction data processed daily.' },
+    { value: '20 GB+', text: 'Of mobile ad interaction data processed daily.' },
     { value: '30%', text: 'Reduction in run-time performance of legacy code after optimization.' },
     { value: '100+', text: 'Stakeholders enabled with self-serve analytics via new pipelines.' },
     { value: '10+', text: 'Robust analytics solutions delivered impacting product & operations.' },
@@ -421,18 +421,18 @@ const projectsData = [
             experienceData.forEach((item, index) => {
                 const isLeft = index % 2 === 0;
                 const timelineItem = document.createElement('div');
-                timelineItem.className = `timeline-item mb-12 flex justify-between items-center w-full ${isLeft ? 'flex-row-reverse' : ''} fade-in`;
+                timelineItem.className = `timeline-item mb-12 flex flex-col sm:flex-row justify-between items-center w-full relative fade-in`;
                 timelineItem.style.animationDelay = `${0.2 + index * 0.1}s`;
                 timelineItem.innerHTML = `
-                    <div class="order-1 w-5/12"></div>
-                    <div class="z-20 flex items-center order-1 bg-gradient-to-br from-blue-600 to-sky-400 shadow-xl w-10 h-10 rounded-full border-4 border-white">
-                        <h1 class="mx-auto font-semibold text-lg text-white">${experienceData.length - index}</h1>
+                    <div class="order-1 w-full sm:w-5/12 ${isLeft ? 'sm:order-2' : 'sm:order-1'}"></div>
+                    <div class="absolute left-1/2 top-0 z-20 hidden sm:flex items-center bg-gradient-to-br from-blue-600 to-sky-400 shadow-xl w-8 h-8 rounded-full border-4 border-white" style="transform: translateX(-50%);">
                     </div>
-                    <div class="order-1 bg-white rounded-2xl shadow-xl w-5/12 px-8 py-6 cursor-pointer transition-transform duration-300 hover:scale-105">
+                    <div class="order-1 bg-white rounded-2xl shadow-xl w-full sm:w-5/12 px-8 py-6 mt-8 sm:mt-0 cursor-pointer transition-transform duration-300 hover:scale-105 ${isLeft ? 'sm:order-1' : 'sm:order-2'}">
                         <div class="flex items-center mb-4">
                             <img src="${item.logo}" alt="${item.company} Logo" class="company-logo">
                             <div>
                                 <h3 class="font-bold text-gray-800 text-xl" style="font-family: 'Playfair Display', serif;">${item.company}</h3>
+                                <p class="text-xs text-gray-500 mb-1">${item.location}</p>
                                 <p class="text-sm font-medium text-blue-600">${item.role}</p>
                                 <p class="text-sm text-gray-500">${item.period}</p>
                             </div>
